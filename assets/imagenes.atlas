@@ -1,0 +1,55 @@
+
+imagenes.png
+size: 2048, 2048
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+EnemyShip
+  rotate: false
+  xy: 0, 339
+  size: 1011, 321
+  orig: 1011, 321
+  offset: 0, 0
+  index: -1
+PlayerShip
+  rotate: false
+  xy: 0, 108
+  size: 591, 231
+  orig: 591, 231
+  offset: 0, 0
+  index: -1
+laserGreen
+  rotate: false
+  xy: 591, 330
+  size: 37, 9
+  orig: 37, 9
+  offset: 0, 0
+  index: -1
+laserRed
+  rotate: false
+  xy: 1920, 1727
+  size: 57, 13
+  orig: 57, 13
+  offset: 0, 0
+  index: -1
+shield1
+  rotate: false
+  xy: 0, 0
+  size: 133, 108
+  orig: 133, 108
+  offset: 0, 0
+  index: -1
+shield2
+  rotate: false
+  xy: 1011, 541
+  size: 143, 119
+  orig: 143, 119
+  offset: 0, 0
+  index: -1
+world_background
+  rotate: false
+  xy: 0, 660
+  size: 1920, 1080
+  orig: 1920, 1080
+  offset: 0, 0
+  index: -1
