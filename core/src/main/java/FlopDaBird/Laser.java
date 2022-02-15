@@ -19,7 +19,7 @@ public class Laser {
     public Laser(float movimientoSpeed, float xCentro, float yCentro, float ancho, float alto, TextureRegion textureRegion) {
         this.movimientoSpeed = movimientoSpeed;
         this.xPosition = xCentro;
-        this.yPosition = yCentro - ancho/2;
+        this.yPosition = yCentro - ancho;
         this.ancho = ancho;
         this.alto = alto;
         this.textureRegion = textureRegion;

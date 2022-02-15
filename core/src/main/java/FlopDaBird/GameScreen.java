@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 class GameScreen implements Screen {
 
@@ -65,9 +66,9 @@ class GameScreen implements Screen {
         enemyLaserTextureReg = textureAtlas.findRegion("laserRed");
 
         //Establecemos los elementos del juego
-        playerShip = new Nave(2, 3, WORLD_WIDTH/4, WORLD_HEIGHT/2, 20, 7, playerShipTextureReg, playerShieldTextureReg);
+        playerShip = new NaveJugador(2, 3, WORLD_WIDTH/4, WORLD_HEIGHT/2, 20, 7, 5, 1, 45, 0.5f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
 
-        enemyShip = new Nave(2, 1, WORLD_WIDTH*3/4, WORLD_HEIGHT/2, 20, 7, enemyShipTextureReg, enemyShieldTextureReg);
+        enemyShip = new NaveEnemiga(2, 1, WORLD_WIDTH*3/4, WORLD_HEIGHT/2, 20, 7, 5, 1, 50, 0.8f, enemyShipTextureReg, enemyShieldTextureReg, enemyLaserTextureReg);
 
         playerLaserList = new LinkedList<>();
         enemyLaserList = new LinkedList<>();
@@ -87,14 +88,50 @@ class GameScreen implements Screen {
         //Mostramos todos los cambios por pantalla
         batch.begin();
 
+        playerShip.update(deltaTime);
+        enemyShip.update(deltaTime);
+
         renderBackground(deltaTime);
 
         //Seccion de las naves enemigas
         enemyShip.pintar(batch);
         //Seccion de la nave del jugador
         playerShip.pintar(batch);
-        //Seccion de los laseres
-
+        //Seccion de los laseres, creamos nuevos laseres, los pintamos y eliminamos los antiguos laseres
+        //Laser del jugador
+        if (playerShip.consultaDisparo()){
+            Laser[] lasers = playerShip.dispararLasers();
+            for (Laser laser: lasers){
+                playerLaserList.add(laser);
+            }
+        }
+        //Laser del enemigo
+        if (enemyShip.consultaDisparo()){
+            Laser[] lasers = enemyShip.dispararLasers();
+            for (Laser laser: lasers){
+                enemyLaserList.add(laser);
+            }
+        }
+        //Pintamos los laseres
+        //Eliminamos los laseres antiguos
+        ListIterator<Laser> iterator = playerLaserList.listIterator();
+        while (iterator.hasNext()){
+            Laser laser = iterator.next();
+            laser.pintar(batch);
+            laser.xPosition += laser.movimientoSpeed*deltaTime;
+            if (laser.xPosition > WORLD_WIDTH){
+                iterator.remove();
+            }
+        }
+        iterator = enemyLaserList.listIterator();
+        while (iterator.hasNext()){
+            Laser laser = iterator.next();
+            laser.pintar(batch);
+            laser.xPosition -= laser.movimientoSpeed*deltaTime;
+            if (laser.xPosition + laser.ancho < 0){
+                iterator.remove();
+            }
+        }
         //Seccion de las explosiones
 
         batch.end();
