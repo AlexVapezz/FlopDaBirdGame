@@ -2,6 +2,7 @@ package FlopDaBird;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 abstract class Nave {
 
@@ -10,8 +11,8 @@ abstract class Nave {
     int escudo;
 
     //Vamos a declarar las posiciones y las dimension
-    float xPosition, yPosition; //La posicion del avion
-    float ancho, alto; //El ancho y alto del avion
+
+    Rectangle boundingBox;
 
     //Vamos a declarar los laseres que usaran los aviones
     float anchoLaser, altoLaser;
@@ -28,10 +29,7 @@ abstract class Nave {
     public Nave(float movimientoSpeed, int escudo, float xCentro, float yCentro, float ancho, float alto, float anchoLaser, float altoLaser, float laserMovimientoSpeed, float tiempoEntreDisparo, TextureRegion texturaAvion, TextureRegion texturaEscudo, TextureRegion texturaLaser) {
         this.movimientoSpeed = movimientoSpeed;
         this.escudo = escudo;
-        this.xPosition = xCentro - ancho/2;
-        this.yPosition = yCentro - alto/2;
-        this.ancho = ancho;
-        this.alto = alto;
+        this.boundingBox = new Rectangle(xCentro - ancho/2, yCentro - alto/2, ancho, alto);
         this.anchoLaser = anchoLaser;
         this.altoLaser = altoLaser;
         this.laserMovimientoSpeed = laserMovimientoSpeed;
@@ -53,11 +51,23 @@ abstract class Nave {
 
     public abstract Laser[] dispararLasers();
 
+    //Creamos la funcion que detecta si el laser intercepta algo
+    public boolean interceptar(Rectangle otroRectangulo){
+        return boundingBox.overlaps(otroRectangulo);
+    }
+
+    //Declaramos una clase para cuando impacte el laser en el avion / nave
+    public void impacto(Laser laser){
+        if (escudo > 0){ //Si todavia disponemos de escudos una vez impacte
+            escudo--; //Eliminamos un escudo del avion
+        }
+    }
+
     //Pintamos el avion y el escudo
     public void pintar(Batch batch){
-        batch.draw(texturaAvion, xPosition, yPosition, ancho, alto);
+        batch.draw(texturaAvion, boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
         if (escudo > 0){ //Si el escudo sigue activo lo pintamos
-            batch.draw(texturaEscudo, xPosition, yPosition, ancho, alto);
+            batch.draw(texturaEscudo, boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
         }
     }
 }

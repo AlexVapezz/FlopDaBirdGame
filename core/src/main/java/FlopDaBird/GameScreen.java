@@ -91,13 +91,54 @@ class GameScreen implements Screen {
         playerShip.update(deltaTime);
         enemyShip.update(deltaTime);
 
+        //Creamos una funcion encargada del fondo del juego
         renderBackground(deltaTime);
 
         //Seccion de las naves enemigas
         enemyShip.pintar(batch);
+
         //Seccion de la nave del jugador
         playerShip.pintar(batch);
-        //Seccion de los laseres, creamos nuevos laseres, los pintamos y eliminamos los antiguos laseres
+
+        //Creamos una funcion encargada de los láseres (pintarlo, movimientos...etc)
+        renderLasers(deltaTime);
+
+        //Debemos detectar las colisiones entre los mismos laseres y aviones
+        detectarColisiones();
+
+        //Creamos una funcion encargada de las explosiones
+        renderExplosions(deltaTime);
+
+        batch.end();
+    }
+
+    private void detectarColisiones(){
+        //Para cada laser del jugador, comprobamos cuando impacta el avion enemigo
+        ListIterator<Laser> iterator = playerLaserList.listIterator();
+        while (iterator.hasNext()) {
+            Laser laser = iterator.next();
+            if (enemyShip.interceptar(laser.boundingBox)){ //Si el laser intercepta la nave enemiga...
+                enemyShip.impacto(laser);
+                iterator.remove(); //Borramos el laser al impactar
+            }
+        }
+
+        //Para cada laser enemigo, detectamos cuando impacta con el avion del jugador
+        iterator = enemyLaserList.listIterator();
+        while (iterator.hasNext()) {
+            Laser laser = iterator.next();
+            if (playerShip.interceptar(laser.boundingBox)){ //Si el laser intercepta la nave del jugador...
+                playerShip.impacto(laser);
+                iterator.remove(); //Borramos el laser al impactar
+            }
+        }
+    }
+
+    private void renderExplosions(float deltaTime){
+
+    }
+
+    private void renderLasers(float deltaTime){
         //Laser del jugador
         if (playerShip.consultaDisparo()){
             Laser[] lasers = playerShip.dispararLasers();
@@ -112,29 +153,25 @@ class GameScreen implements Screen {
                 enemyLaserList.add(laser);
             }
         }
-        //Pintamos los laseres
-        //Eliminamos los laseres antiguos
+        //Pintamos los laseres y eliminamos los laseres antiguos
         ListIterator<Laser> iterator = playerLaserList.listIterator();
         while (iterator.hasNext()){
             Laser laser = iterator.next();
-            laser.pintar(batch);
-            laser.xPosition += laser.movimientoSpeed*deltaTime;
-            if (laser.xPosition > WORLD_WIDTH){
-                iterator.remove();
+            laser.pintar(batch); //Pintamos el laser
+            laser.boundingBox.x += laser.movimientoSpeed*deltaTime; //Aplicamos el movimiento del laser para que vaya a la derecha
+            if (laser.boundingBox.x > WORLD_WIDTH){ //En cuanto pase la pantalla...
+                iterator.remove(); //...eliminamos el laser
             }
         }
         iterator = enemyLaserList.listIterator();
         while (iterator.hasNext()){
             Laser laser = iterator.next();
-            laser.pintar(batch);
-            laser.xPosition -= laser.movimientoSpeed*deltaTime;
-            if (laser.xPosition + laser.ancho < 0){
-                iterator.remove();
+            laser.pintar(batch); //Pintamos el laser
+            laser.boundingBox.x -= laser.movimientoSpeed*deltaTime; //Aplicamos el movimiento igual que en el anterior pero a la izquierda
+            if (laser.boundingBox.x + laser.boundingBox.width < 0){ //En cuanto pase la pantalla...
+                iterator.remove(); //...eliminamos el laser
             }
         }
-        //Seccion de las explosiones
-
-        batch.end();
     }
 
     private void renderBackground(float deltaTime){

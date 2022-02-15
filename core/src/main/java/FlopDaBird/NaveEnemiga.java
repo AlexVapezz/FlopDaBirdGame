@@ -19,8 +19,8 @@ class NaveEnemiga extends Nave{
     @Override
     public Laser[] dispararLasers() {
         Laser[] lasers = new Laser[2];
-        lasers[0] = new Laser(laserMovimientoSpeed,xPosition + ancho * 0.36f, yPosition + alto * 0.65f,anchoLaser, altoLaser, texturaLaser);
-        lasers[1] = new Laser(laserMovimientoSpeed,xPosition + ancho * 0.10f, yPosition + alto * 0.95f,anchoLaser, altoLaser, texturaLaser);
+        lasers[0] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.36f, boundingBox.y + boundingBox.height * 0.65f,anchoLaser, altoLaser, texturaLaser);
+        lasers[1] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.10f, boundingBox.y + boundingBox.height * 0.95f,anchoLaser, altoLaser, texturaLaser);
 
         tiempoDesdeUltTiro = 0;
 
