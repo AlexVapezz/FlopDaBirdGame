@@ -57,10 +57,12 @@ abstract class Nave {
     }
 
     //Declaramos una clase para cuando impacte el laser en el avion / nave
-    public void impacto(Laser laser){
+    public boolean impacto(Laser laser){
         if (escudo > 0){ //Si todavia disponemos de escudos una vez impacte
             escudo--; //Eliminamos un escudo del avion
+            return false;
         }
+        return true;
     }
 
     //Creamos el metodo encargado de las transiciones o movimientos de la nave / avion
