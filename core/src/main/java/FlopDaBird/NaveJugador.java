@@ -16,6 +16,8 @@ class NaveJugador extends Nave{
         super(movimientoSpeed, escudo, xCentro, yCentro, ancho, alto, anchoLaser, altoLaser, laserMovimientoSpeed, tiempoEntreDisparo, texturaAvion, texturaEscudo, texturaLaser);
     }
 
+    //El siguiente método nos permitirá dispara y generar los nuevos objetos láser
+
     @Override
     public Laser[] dispararLasers() {
         Laser[] lasers = new Laser[2];

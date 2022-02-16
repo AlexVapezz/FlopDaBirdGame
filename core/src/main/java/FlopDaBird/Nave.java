@@ -63,6 +63,11 @@ abstract class Nave {
         }
     }
 
+    //Creamos el metodo encargado de las transiciones o movimientos de la nave / avion
+    public void transicion(float xCambio, float yCambio){
+        boundingBox.setPosition(boundingBox.x + xCambio, boundingBox.y + yCambio);
+    }
+
     //Pintamos el avion y el escudo
     public void pintar(Batch batch){
         batch.draw(texturaAvion, boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);

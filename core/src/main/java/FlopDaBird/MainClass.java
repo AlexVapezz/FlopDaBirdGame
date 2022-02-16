@@ -7,10 +7,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Random;
+
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class MainClass extends Game {
 
 	GameScreen gameScreen;
+
+	public static Random random = new Random();
 
 	@Override
 	public void create() {
