@@ -70,9 +70,9 @@ class GameScreen implements Screen {
         enemyLaserTextureReg = textureAtlas.findRegion("laserRed");
 
         //Establecemos los elementos del juego
-        playerShip = new NaveJugador(60, 3, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 45, 0.5f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
+        playerShip = new NaveJugador(40, 3, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 45, 0.5f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
 
-        enemyShip = new NaveEnemiga(55, 1, MainClass.random.nextFloat()*(WORLD_WIDTH - 17) + 5, WORLD_HEIGHT - 5, 17, 5, 5, 0.65f, 50, 1.2f, enemyShipTextureReg, enemyShieldTextureReg, enemyLaserTextureReg);
+        enemyShip = new NaveEnemiga(12, 1, WORLD_WIDTH - 17, MainClass.random.nextFloat()*(WORLD_HEIGHT - 5) + 10, 17, 5, 5, 0.65f, 40, 0.9f, enemyShipTextureReg, enemyShieldTextureReg, enemyLaserTextureReg);
 
         playerLaserList = new LinkedList<>();
         enemyLaserList = new LinkedList<>();
@@ -210,12 +210,15 @@ class GameScreen implements Screen {
         float xMovimiento = enemyShip.getVectorDeDireccion().x * enemyShip.movimientoSpeed * deltaTime;
         float yMovimiento = enemyShip.getVectorDeDireccion().y * enemyShip.movimientoSpeed * deltaTime;
 
+        //Impedimos que el avion enemigo salga de los limites establecidos en el eje x
         if (xMovimiento > 0) xMovimiento = Math.min(xMovimiento, limiteDer);
         else xMovimiento = Math.max(xMovimiento, limiteIzq);
 
+        //Y lo mismo con el eje y
         if (yMovimiento > 0) yMovimiento = Math.min(yMovimiento, limiteArriba);
         else yMovimiento = Math.max(yMovimiento, limiteAbajo);
 
+        //Realizamos la transicion teniendo en cuenta estos movimientos
         enemyShip.transicion(xMovimiento, yMovimiento);
     }
 

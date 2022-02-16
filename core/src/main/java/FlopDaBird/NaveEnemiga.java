@@ -27,7 +27,7 @@ class NaveEnemiga extends Nave{
     }
 
     private void direccionVectorRandom(){
-        double bearing = MainClass.random.nextDouble()*2*Math.PI; //Esto nos dara un numero entre 0 y 2 por PI
+        double bearing = MainClass.random.nextDouble()*6.28318; //Esto nos dara un numero entre 0 y 2 por PI
         vectorDeDireccion.x = (float)Math.sin(bearing); //Al hacer el seno obtenemos la direccion de x
         vectorDeDireccion.y = (float)Math.cos(bearing); //Al hacer el coseno obtenemos la direccion de y
     }
@@ -37,6 +37,7 @@ class NaveEnemiga extends Nave{
         super.update(deltaTime); //Esto llamara al metodo update padre y hara que se ejecute este tambien
         tiempoDesdeUltMovimiento = tiempoDesdeUltTiro + deltaTime; //Vamos sumandole al tiempo desde el ultimo movimiento de la nave secundaria el tiempo que va transcurriendo
         if (tiempoDesdeUltMovimiento > frecuenciaCambioDireccion){ //Si el tiempo desde el ultimo movimiento de la nave enemiga es mayor al tiempo de cambio de direccion...
+            direccionVectorRandom(); //Movemos el avion enemigo
             tiempoDesdeUltMovimiento = tiempoDesdeUltMovimiento - frecuenciaCambioDireccion; //Lo reducimos para que se realice de manera infinita
         }
     }
