@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 class NaveJugador extends Nave{
 
+    int vidas;
 
     public NaveJugador(float movimientoSpeed, int escudo,
                        float xCentro, float yCentro,
@@ -14,6 +15,7 @@ class NaveJugador extends Nave{
                        TextureRegion texturaEscudo,
                        TextureRegion texturaLaser) {
         super(movimientoSpeed, escudo, xCentro, yCentro, ancho, alto, anchoLaser, altoLaser, laserMovimientoSpeed, tiempoEntreDisparo, texturaAvion, texturaEscudo, texturaLaser);
+        vidas = 3;
     }
 
     //El siguiente método nos permitirá dispara y generar los nuevos objetos láser

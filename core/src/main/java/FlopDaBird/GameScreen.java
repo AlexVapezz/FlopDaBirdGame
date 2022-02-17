@@ -4,19 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Locale;
 
 class GameScreen implements Screen {
 
@@ -40,8 +45,8 @@ class GameScreen implements Screen {
     private float timerSpawnEnemigo = 0;
 
     //PARAMETROS DEL MUNDO:
-    private final int WORLD_HEIGHT = 72;
-    private final int WORLD_WIDTH = 128;
+    private final float WORLD_HEIGHT = 72;
+    private final float WORLD_WIDTH = 128;
     private final float TOUCH_MOVEMENT_THRESHOLD = 0.5f; //Esta medida nos ayudará a que cuando pulsemos cerca del elemento en la pantalla no tiemble el objeto
 
     //OBJETOS DEL JUEGO:
@@ -50,6 +55,12 @@ class GameScreen implements Screen {
     private LinkedList<Laser> playerLaserList;
     private LinkedList<Laser> enemyLaserList;
     private LinkedList<Explosion> listaExplosion;
+    private int puntuacion = 0;
+
+    //Aqui vamos a declarar el HUD del juego
+    BitmapFont font;
+    float hudMargenVertical, hudMargenIzq, hudMargenDer, hudCentro, hudFila1Y, hudFila2Y, hudAnchoSeccion;
+
 
     //Vamos a crear el constructor del GameScreen
     GameScreen() {
@@ -88,6 +99,33 @@ class GameScreen implements Screen {
 
         batch = new SpriteBatch(); //Esto tomará todos los cambios gráficos que hagamos en el juego y los mostrará  la vez
 
+        prepararHUD();
+    }
+
+    //Vamos a crear una funcion encargada de preparar el HUD del juego
+    private void prepararHUD(){
+        //Creamos el bitmap de la fuente que vamos a usar
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fuentes/8-bit Arcade In.ttf")); //Creamos la fuente usando el archivo
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        fontParameter.size = 72; //Le añadimos el tamaño pero este no sera el tamaño final
+        fontParameter.borderWidth = 3.6f; //El borde
+        fontParameter.color = new Color(1,1,1,0.3f); //Le ponemos el color a la fuente siendo este blanco medio transparente
+        fontParameter.borderColor = new Color(0,0,0,0.3f); //Y lo mismo al borde pero en negro
+
+        font = fontGenerator.generateFont(fontParameter);
+
+        //Ajustamos la fuente para encajarla en nuestro juego
+        font.getData().setScale(0.095f); //Lo escalamos a un tamaño razonable
+
+        //Calculamos los margenes (Aqui guardaremos la informacion referida a los margenes y posicionamiento del HUD dle jugador)
+        hudMargenVertical = font.getCapHeight() / 2;
+        hudMargenIzq = hudMargenVertical;
+        hudMargenDer = WORLD_WIDTH * 2 / 3 - hudMargenIzq;
+        hudCentro = WORLD_WIDTH / 3;
+        hudFila1Y = WORLD_HEIGHT - hudMargenVertical;
+        hudFila2Y = hudFila1Y - hudMargenVertical -font.getCapHeight();
+        hudAnchoSeccion = WORLD_WIDTH / 3;
     }
 
     @Override
@@ -133,7 +171,21 @@ class GameScreen implements Screen {
         //Creamos una funcion encargada de las explosiones
         renderExplosions(deltaTime);
 
+        //Creamos una funcion encargada del HUD
+        renderHUD();
+
         batch.end();
+    }
+
+    private void renderHUD(){
+        //Aqui pintamos solo los nombres correspondientes pero no los valores, usando las medidas que hemos declarado anteriormente
+        font.draw(batch, "Puntuacion", hudMargenIzq, hudFila1Y, hudAnchoSeccion, Align.left, false);
+        font.draw(batch, "Escudo", hudCentro, hudFila1Y, hudAnchoSeccion, Align.center, false);
+        font.draw(batch, "Vidas", hudMargenDer, hudFila1Y, hudAnchoSeccion, Align.right, false);
+        //Aqui pintamos la segunda fila donde estará la puntuacion, los escudos y la vida
+        font.draw(batch, String.format(Locale.getDefault(), "%06d", puntuacion), hudMargenIzq, hudFila2Y, hudAnchoSeccion, Align.left, false);
+        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.escudo), hudCentro, hudFila2Y, hudAnchoSeccion, Align.center, false);
+        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.vidas), hudMargenDer, hudFila2Y, hudAnchoSeccion, Align.right, false);
     }
 
     //Declaramos una funcion para spawnear nuevos enemigos
@@ -259,6 +311,7 @@ class GameScreen implements Screen {
                     if (enemyShip.impacto(laser)){ //Impacto ¡BOOM!
                         iteradorNavesEnemigas.remove(); //Eliminamos la nave enemiga
                         listaExplosion.add(new Explosion(texturaExplosion, new Rectangle(enemyShip.boundingBox), 0.7f)); //Creamos la explosion una vez impacte
+                        puntuacion = puntuacion + 100; //Por cada avion enemigo que destruyamos se añaden 100 puntos a la puntuacion
                     }
                     iteratorLaser.remove(); //Borramos el laser al impactar
                     break; //Si impactamos con una nave no queremos continuar comprobando
@@ -273,7 +326,12 @@ class GameScreen implements Screen {
             if (playerShip.interceptar(laser.boundingBox)){ //Si el laser intercepta la nave del jugador...
                 if (playerShip.impacto(laser)){
                     listaExplosion.add(new Explosion(texturaExplosion, new Rectangle(playerShip.boundingBox), 1.6f)); //Creamos la explosion una vez impacte
-                    playerShip.escudo = 10;
+                    playerShip.escudo = 10; //En cuanto el jugador muera
+                    if (playerShip.vidas > 0){
+                        playerShip.vidas--;
+                    }else {
+
+                    }
                 }
                 iteratorLaser.remove(); //Borramos el laser al impactar
             }

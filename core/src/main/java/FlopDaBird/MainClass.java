@@ -36,4 +36,5 @@ public class MainClass extends Game {
 	public void resize(int width, int height) {
 		gameScreen.resize(width, height);
 	}
+
 }
