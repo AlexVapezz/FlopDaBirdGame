@@ -8,14 +8,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -39,7 +37,7 @@ class GameScreen implements Screen {
     private TextureRegion[] backgrounds; //De esta manera obtenemos cada una de las texturas del atlas
     private TextureRegion playerShipTextureReg, playerShieldTextureReg, enemyShipTextureReg, enemyShieldTextureReg, playerLaserTextureReg, enemyLaserTextureReg; //Aqui obtenemos cada una de las texturas
     private Texture texturaExplosion;
-    private Texture tittle;
+    private Texture title;
     private Texture tap;
     private Texture end;
 
@@ -150,11 +148,11 @@ class GameScreen implements Screen {
         //Creamos unos if para que en funcion del estado del juego muestre una cosa u otra en la pantalla
         if (state == "ready"){
 
-            tittle = new Texture("FLOPDABIRD.png");
-            batch.draw(tittle, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, tittle.getWidth() / 4, tittle.getHeight() / 4);
+            title = new Texture("FLOPDAPLANE.png");
+            batch.draw(title, WORLD_WIDTH / 6, WORLD_HEIGHT / 2, title.getWidth() / 4, title.getHeight() / 4);
 
             tap = new Texture("PressStart.png");
-            batch.draw(tap, WORLD_WIDTH / 4, WORLD_HEIGHT / 3, tittle.getWidth() / 5, tittle.getHeight() / 5);
+            batch.draw(tap, WORLD_WIDTH / 4, WORLD_HEIGHT / 3, title.getWidth() / 5, title.getHeight() / 5);
 
             renderReady();
 
@@ -194,7 +192,7 @@ class GameScreen implements Screen {
 
         }else if (state == "gameover"){
             end = new Texture("gameover.png");
-            batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, tittle.getWidth() / 4, tittle.getHeight() / 4);
+            batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, end.getWidth() / 4, end.getHeight() / 4);
 
             renderGameOver();
         }
@@ -214,7 +212,7 @@ class GameScreen implements Screen {
 
     private void renderReady(){
         if (Gdx.input.justTouched()){
-            tittle.dispose();
+            title.dispose();
             tap.dispose();
             state = "running";
         }
