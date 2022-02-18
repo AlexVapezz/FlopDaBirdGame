@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -30,6 +31,7 @@ class GameScreen implements Screen {
     //PANTALLA:
     private Camera camera;
     private Viewport viewport;
+    private String state = "ready";
 
     //GRÁFICOS:
     private SpriteBatch batch;
@@ -37,11 +39,14 @@ class GameScreen implements Screen {
     private TextureRegion[] backgrounds; //De esta manera obtenemos cada una de las texturas del atlas
     private TextureRegion playerShipTextureReg, playerShieldTextureReg, enemyShipTextureReg, enemyShieldTextureReg, playerLaserTextureReg, enemyLaserTextureReg; //Aqui obtenemos cada una de las texturas
     private Texture texturaExplosion;
+    private Texture tittle;
+    private Texture tap;
+    private Texture end;
 
     //TIMING:
     private float[] backgroundOffsets = {0};
     private float backgroundScrollSpeed;
-    private float tiempoEntreSpawnEnemigo = 2.5f;
+    private float tiempoEntreSpawnEnemigo = 1.5f;
     private float timerSpawnEnemigo = 0;
 
     //PARAMETROS DEL MUNDO:
@@ -88,7 +93,7 @@ class GameScreen implements Screen {
         texturaExplosion = new Texture("explosion.png");
 
         //Establecemos los elementos del juego
-        playerShip = new NaveJugador(40, 3, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 45, 0.5f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
+        playerShip = new NaveJugador(45, 10, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 45, 0.40f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
 
         enemyShipLista = new LinkedList<>();
 
@@ -142,50 +147,88 @@ class GameScreen implements Screen {
         //Creamos una funcion encargada del fondo del juego
         renderBackground(deltaTime);
 
-        //Con este método detectamos las entradas de teclado
-        detectarInput(deltaTime);
-        playerShip.update(deltaTime);
+        //Creamos unos if para que en funcion del estado del juego muestre una cosa u otra en la pantalla
+        if (state == "ready"){
 
-        spawnearAvionesEnemigos(deltaTime);
+            tittle = new Texture("FLOPDABIRD.png");
+            batch.draw(tittle, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, tittle.getWidth() / 4, tittle.getHeight() / 4);
 
-        //Vamos a declarar un iterador para recorrer la lista de objetos Naves enemigas
-        ListIterator<NaveEnemiga> iteradorNaveEnemiga = enemyShipLista.listIterator();
-        while (iteradorNaveEnemiga.hasNext()){ //Por cada nave enemiga de la lista...
-            NaveEnemiga enemyShip = iteradorNaveEnemiga.next();
-            //Dotaremos de movimiento a los enemigos
-            moverEnemigo(enemyShip, deltaTime);
-            enemyShip.update(deltaTime);
-            //Pintaremos las naves enemigas
-            enemyShip.pintar(batch);
+            tap = new Texture("PressStart.png");
+            batch.draw(tap, WORLD_WIDTH / 4, WORLD_HEIGHT / 3, tittle.getWidth() / 5, tittle.getHeight() / 5);
+
+            renderReady();
+
+        }else if (state == "running"){
+
+            //Con este método detectamos las entradas de teclado y de la pantalla al tocar
+            detectarInput(deltaTime);
+            playerShip.update(deltaTime);
+
+            spawnearAvionesEnemigos(deltaTime);
+
+            //Vamos a declarar un iterador para recorrer la lista de objetos Naves enemigas
+            ListIterator<NaveEnemiga> iteradorNaveEnemiga = enemyShipLista.listIterator();
+            while (iteradorNaveEnemiga.hasNext()){ //Por cada nave enemiga de la lista...
+                NaveEnemiga enemyShip = iteradorNaveEnemiga.next();
+                //Dotaremos de movimiento a los enemigos
+                moverEnemigo(enemyShip, deltaTime);
+                enemyShip.update(deltaTime);
+                //Pintaremos las naves enemigas
+                enemyShip.pintar(batch);
+            }
+
+            //Seccion de la nave del jugador
+            playerShip.pintar(batch);
+
+            //Creamos una funcion encargada de los láseres (pintarlo, movimientos...etc)
+            renderLasers(deltaTime);
+
+            //Debemos detectar las colisiones entre los mismos laseres y aviones
+            detectarColisiones();
+
+            //Creamos una funcion encargada de las explosiones
+            renderExplosions(deltaTime);
+
+            //Creamos una funcion encargada del HUD
+            renderHUD();
+
+        }else if (state == "gameover"){
+            end = new Texture("gameover.png");
+            batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, tittle.getWidth() / 4, tittle.getHeight() / 4);
+
+            renderGameOver();
         }
-
-        //Seccion de la nave del jugador
-        playerShip.pintar(batch);
-
-        //Creamos una funcion encargada de los láseres (pintarlo, movimientos...etc)
-        renderLasers(deltaTime);
-
-        //Debemos detectar las colisiones entre los mismos laseres y aviones
-        detectarColisiones();
-
-        //Creamos una funcion encargada de las explosiones
-        renderExplosions(deltaTime);
-
-        //Creamos una funcion encargada del HUD
-        renderHUD();
 
         batch.end();
     }
 
+    private void renderGameOver(){
+        if (Gdx.input.justTouched()){
+            end.dispose();
+            state = "ready";
+            playerShip.vidas = 3;
+            playerShip.escudo = 10;
+            puntuacion = 0;
+        }
+    }
+
+    private void renderReady(){
+        if (Gdx.input.justTouched()){
+            tittle.dispose();
+            tap.dispose();
+            state = "running";
+        }
+    }
+
     private void renderHUD(){
         //Aqui pintamos solo los nombres correspondientes pero no los valores, usando las medidas que hemos declarado anteriormente
-        font.draw(batch, "Puntuacion", hudMargenIzq, hudFila1Y, hudAnchoSeccion, Align.left, false);
-        font.draw(batch, "Escudo", hudCentro, hudFila1Y, hudAnchoSeccion, Align.center, false);
-        font.draw(batch, "Vidas", hudMargenDer, hudFila1Y, hudAnchoSeccion, Align.right, false);
+        font.draw(batch, "Puntuacion", hudMargenIzq, hudFila1Y -2.5f, hudAnchoSeccion, Align.left, false);
+        font.draw(batch, "Escudo", hudCentro, hudFila1Y - 2.5f, hudAnchoSeccion, Align.center, false);
+        font.draw(batch, "Vidas", hudMargenDer, hudFila1Y - 2.5f, hudAnchoSeccion, Align.right, false);
         //Aqui pintamos la segunda fila donde estará la puntuacion, los escudos y la vida
-        font.draw(batch, String.format(Locale.getDefault(), "%06d", puntuacion), hudMargenIzq, hudFila2Y, hudAnchoSeccion, Align.left, false);
-        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.escudo), hudCentro, hudFila2Y, hudAnchoSeccion, Align.center, false);
-        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.vidas), hudMargenDer, hudFila2Y, hudAnchoSeccion, Align.right, false);
+        font.draw(batch, String.format(Locale.getDefault(), "%06d", puntuacion), hudMargenIzq, hudFila2Y - 2.5f, hudAnchoSeccion, Align.left, false);
+        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.escudo), hudCentro, hudFila2Y - 2.5f, hudAnchoSeccion, Align.center, false);
+        font.draw(batch, String.format(Locale.getDefault(), "%02d", playerShip.vidas), hudMargenDer, hudFila2Y - 2.5f, hudAnchoSeccion, Align.right, false);
     }
 
     //Declaramos una funcion para spawnear nuevos enemigos
@@ -330,7 +373,7 @@ class GameScreen implements Screen {
                     if (playerShip.vidas > 0){
                         playerShip.vidas--;
                     }else {
-
+                        state = "gameover";
                     }
                 }
                 iteratorLaser.remove(); //Borramos el laser al impactar
