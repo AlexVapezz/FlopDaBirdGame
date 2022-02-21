@@ -3,6 +3,8 @@ package FlopDaBird;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -40,6 +42,11 @@ class GameScreen implements Screen {
     private Texture title;
     private Texture tap;
     private Texture end;
+
+    //SONIDO:
+    private Sound explosionSound;
+    private Music backgroundMusic;
+    private Sound gameoverSound;
 
     //TIMING:
     private float[] backgroundOffsets = {0};
@@ -79,6 +86,11 @@ class GameScreen implements Screen {
         backgrounds[0] = textureAtlas.findRegion("world_background");
 
         backgroundScrollSpeed = WORLD_WIDTH;
+
+        //Establecemos los sonidos que usaremos
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/explosion.ogg"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sonidos/background.m4a"));
+        gameoverSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/gameover.m4a"));
 
         //Iniciamos las texturas
         playerShipTextureReg = textureAtlas.findRegion("PlayerShip");
@@ -148,6 +160,11 @@ class GameScreen implements Screen {
         //Creamos unos if para que en funcion del estado del juego muestre una cosa u otra en la pantalla
         if (state == "ready"){
 
+            //Establecemos musica de fondo
+            backgroundMusic.setVolume(0.8f);
+            backgroundMusic.setLooping(true);
+            backgroundMusic.play();
+
             title = new Texture("FLOPDAPLANE.png");
             batch.draw(title, WORLD_WIDTH / 6, WORLD_HEIGHT / 2, title.getWidth() / 4, title.getHeight() / 4);
 
@@ -191,6 +208,12 @@ class GameScreen implements Screen {
             renderHUD();
 
         }else if (state == "gameover"){
+            backgroundMusic.stop();
+            long id = gameoverSound.play(0.3f);
+            gameoverSound.setPitch(id,3);
+            gameoverSound.setLooping(id, false);
+            gameoverSound.dispose();
+            gameoverSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/gameover.m4a"));
             end = new Texture("gameover.png");
             batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, end.getWidth() / 4, end.getHeight() / 4);
 
@@ -207,6 +230,11 @@ class GameScreen implements Screen {
             playerShip.vidas = 3;
             playerShip.escudo = 10;
             puntuacion = 0;
+
+            enemyShipLista.clear();
+            enemyLaserList.clear();
+            playerLaserList.clear();
+            listaExplosion.clear();
         }
     }
 
@@ -388,6 +416,11 @@ class GameScreen implements Screen {
                 iteradorExplosiones.remove();
             }else {
                 explosion.pintar(batch);
+                long id = explosionSound.play(0.3f);
+                explosionSound.setPitch(id,2);
+                explosionSound.setLooping(id, false);
+                explosionSound.dispose();
+                explosionSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/explosion.ogg"));
             }
         }
     }
