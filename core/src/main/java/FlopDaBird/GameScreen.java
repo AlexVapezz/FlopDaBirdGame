@@ -51,7 +51,7 @@ class GameScreen implements Screen {
     //TIMING:
     private float[] backgroundOffsets = {0};
     private float backgroundScrollSpeed;
-    private float tiempoEntreSpawnEnemigo = 1.5f;
+    private float tiempoEntreSpawnEnemigo = 2.0f;
     private float timerSpawnEnemigo = 0;
 
     //PARAMETROS DEL MUNDO:
@@ -103,7 +103,7 @@ class GameScreen implements Screen {
         texturaExplosion = new Texture("explosion.png");
 
         //Establecemos los elementos del juego
-        playerShip = new NaveJugador(45, 10, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 45, 0.40f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
+        playerShip = new NaveJugador(45, 10, WORLD_WIDTH/4, WORLD_HEIGHT/2, 17, 5, 5, 0.65f, 50, 0.30f, playerShipTextureReg, playerShieldTextureReg, playerLaserTextureReg);
 
         enemyShipLista = new LinkedList<>();
 
@@ -262,7 +262,7 @@ class GameScreen implements Screen {
         timerSpawnEnemigo = timerSpawnEnemigo + deltaTime; //Aqui vamos contando el tiempo que tardan en spawnear
 
         if (timerSpawnEnemigo > tiempoEntreSpawnEnemigo) { //Si ese tiempo es menor que el indicado como limite, spawneamos un nuevo enemigo
-            enemyShipLista.add(new NaveEnemiga(12, 1, WORLD_WIDTH - 17, MainClass.random.nextFloat() * (WORLD_HEIGHT - 5) + 10, 17, 5, 5, 0.65f, 40, 0.9f, enemyShipTextureReg, enemyShieldTextureReg, enemyLaserTextureReg));
+            enemyShipLista.add(new NaveEnemiga(12, 1, WORLD_WIDTH - 17, MainClass.random.nextFloat() * (WORLD_HEIGHT - 5) + 10, 17, 5, 5, 0.65f, 50, 1.25f, enemyShipTextureReg, enemyShieldTextureReg, enemyLaserTextureReg));
             timerSpawnEnemigo = timerSpawnEnemigo - tiempoEntreSpawnEnemigo;
         }
     }
