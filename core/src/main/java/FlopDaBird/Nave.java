@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
+import FlopDaBird.Laser;
+
 abstract class Nave {
 
     //Vamos a declarar las caractericticas de la nave/avion

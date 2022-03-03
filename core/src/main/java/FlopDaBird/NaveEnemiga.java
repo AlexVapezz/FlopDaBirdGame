@@ -3,7 +3,11 @@ package FlopDaBird;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-class NaveEnemiga extends Nave{
+import FlopDaBird.Laser;
+import FlopDaBird.MainClass;
+import FlopDaBird.Nave;
+
+class NaveEnemiga extends Nave {
 
     Vector2 vectorDeDireccion;
     float tiempoDesdeUltMovimiento = 0; //Esto nos servira para calcular el tiempo desde el ultimo movimiento

@@ -2,7 +2,10 @@ package FlopDaBird;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-class NaveJugador extends Nave{
+import FlopDaBird.Laser;
+import FlopDaBird.Nave;
+
+class NaveJugador extends Nave {
 
     int vidas;
 

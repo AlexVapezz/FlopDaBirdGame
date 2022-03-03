@@ -24,6 +24,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Locale;
 
+import FlopDaBird.NaveEnemiga;
+import FlopDaBird.NaveJugador;
+
 class GameScreen implements Screen {
 
     //Vamos a declarar una serie de variables de pantalla, gráficos, timing, los parametros del mundo y los objetos del juego.
@@ -176,7 +179,7 @@ class GameScreen implements Screen {
         }else if (state == "running"){
 
             //Con este método detectamos las entradas de teclado y de la pantalla al tocar
-            detectarInput(deltaTime);
+            detectarInput(deltaTime); //Este metodo es el encargado de detectar cuando tocamos la pantalla al jugar
             playerShip.update(deltaTime);
 
             spawnearAvionesEnemigos(deltaTime); //Este metodo se encarga de generar los aviones enemigos
@@ -277,38 +280,6 @@ class GameScreen implements Screen {
         limiteAbajo = -playerShip.boundingBox.y; //Lo mismo que arriba pero en eje y
         limiteDer = (float) WORLD_WIDTH/2 - playerShip.boundingBox.x - playerShip.boundingBox.width; //Limite a la derecha (le ponemos como límite la mitad del width del mundo)
         limiteArriba = WORLD_HEIGHT -playerShip.boundingBox.y - playerShip.boundingBox.height; //Limite hacia arriba
-
-        //----------------------------------------EXPLICACION DE LO DE ABAJO--------------------------------------------------------------------------------------------------------------------
-
-        //  Vamos a poner como ejemplo el primero:
-        //
-        //  if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && limiteDer > 0){ //Si estamos pulsando la recla hacia la derecha y no estamos en el limite...
-        //            float xCambio = playerShip.movimientoSpeed*deltaTime; //Calculamos la posicion con respecto al eje x
-        //            xCambio = Math.min(xCambio, limiteDer); //Obtenemos el valor minimo del limite y la posicion para que nunca pase de este
-        //            playerShip.transicion(xCambio, 0f); //Y llamamos a la funcion transicion para que aplique el movimiento sobre el objeto
-
-        //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && limiteDer > 0){ //Si estamos pulsando la recla hacia la derecha y no estamos en el limite...
-            float xCambio = playerShip.movimientoSpeed*deltaTime;
-            xCambio = Math.min(xCambio, limiteDer);
-            playerShip.transicion(xCambio, 0f);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && limiteArriba > 0){ //Si estamos pulsando la recla hacia la derecha y no estamos en el limite...
-            float yCambio = playerShip.movimientoSpeed*deltaTime;
-            yCambio = Math.min(yCambio, limiteArriba);
-            playerShip.transicion(0f, yCambio);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP) && limiteIzq < 0){ //Si estamos pulsando la recla hacia la derecha y no estamos en el limite...
-            float xCambio = -playerShip.movimientoSpeed*deltaTime;
-            xCambio = Math.max(xCambio, limiteIzq);
-            playerShip.transicion(xCambio, 0f);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && limiteAbajo < 0){ //Si estamos pulsando la recla hacia la derecha y no estamos en el limite...
-            float yCambio = -playerShip.movimientoSpeed*deltaTime;
-            yCambio = Math.max(yCambio, limiteAbajo);
-            playerShip.transicion(0f, yCambio);
-        }
 
         //Entradas táctiles (o del raton)
         if (Gdx.input.isTouched()){
