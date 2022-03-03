@@ -45,11 +45,11 @@ class NaveEnemiga extends Nave{
     //El siguiente método nos permitirá dispara y generar los nuevos objetos láser
     @Override
     public Laser[] dispararLasers() {
-        Laser[] lasers = new Laser[2];
-        lasers[0] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.36f, boundingBox.y + boundingBox.height * 0.65f,anchoLaser, altoLaser, texturaLaser);
-        lasers[1] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.10f, boundingBox.y + boundingBox.height * 0.95f,anchoLaser, altoLaser, texturaLaser);
+        Laser[] lasers = new Laser[2]; //Creamos dos nuevos laseres
+        lasers[0] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.36f, boundingBox.y + boundingBox.height * 0.65f,anchoLaser, altoLaser, texturaLaser); //Primer laser
+        lasers[1] = new Laser(laserMovimientoSpeed,boundingBox.x + boundingBox.width * 0.10f, boundingBox.y + boundingBox.height * 0.95f,anchoLaser, altoLaser, texturaLaser); //Segundo laser
 
-        tiempoDesdeUltTiro = 0;
+        tiempoDesdeUltTiro = 0; //Reiniciamos el contador para decirle que acabamos de disparar
 
         return lasers;
     }

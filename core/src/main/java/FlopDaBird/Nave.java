@@ -8,11 +8,11 @@ abstract class Nave {
 
     //Vamos a declarar las caractericticas de la nave/avion
     float movimientoSpeed; //Declaramos la velocidad del avion
-    int escudo;
+    int escudo; //Esto serán los escudos que usaremos
 
     //Vamos a declarar las posiciones y las dimension
 
-    Rectangle boundingBox;
+    Rectangle boundingBox; //Establecemos el cuerpo como tal del objeto, en este caso es un rectangulo ya que es la forma que mas se adapta a nuestros aviones
 
     //Vamos a declarar los laseres que usaran los aviones
     float anchoLaser, altoLaser;

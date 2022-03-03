@@ -38,15 +38,15 @@ class GameScreen implements Screen {
     private TextureAtlas textureAtlas; //De esta manera obtenemos el atlas o el pack de texturas
     private TextureRegion[] backgrounds; //De esta manera obtenemos cada una de las texturas del atlas
     private TextureRegion playerShipTextureReg, playerShieldTextureReg, enemyShipTextureReg, enemyShieldTextureReg, playerLaserTextureReg, enemyLaserTextureReg; //Aqui obtenemos cada una de las texturas
-    private Texture texturaExplosion;
-    private Texture title;
-    private Texture tap;
-    private Texture end;
+    private Texture texturaExplosion; //Obtenemos la textura de la explosion
+    private Texture title; //La del titulo
+    private Texture tap; //La de press start
+    private Texture end; //La de game over
 
     //SONIDO:
-    private Sound explosionSound;
-    private Music backgroundMusic;
-    private Sound gameoverSound;
+    private Sound explosionSound; //Sonido de la explosion
+    private Music backgroundMusic; //Sonido de la musica de fondo
+    private Sound gameoverSound; //Sonido que realiza al morir
 
     //TIMING:
     private float[] backgroundOffsets = {0};
@@ -60,32 +60,32 @@ class GameScreen implements Screen {
     private final float TOUCH_MOVEMENT_THRESHOLD = 0.5f; //Esta medida nos ayudará a que cuando pulsemos cerca del elemento en la pantalla no tiemble el objeto
 
     //OBJETOS DEL JUEGO:
-    private NaveJugador playerShip;
-    private LinkedList<NaveEnemiga> enemyShipLista;
-    private LinkedList<Laser> playerLaserList;
-    private LinkedList<Laser> enemyLaserList;
-    private LinkedList<Explosion> listaExplosion;
-    private int puntuacion = 0;
+    private NaveJugador playerShip; //La nave del jugador
+    private LinkedList<NaveEnemiga> enemyShipLista; //Lista de naves enemigas
+    private LinkedList<Laser> playerLaserList; //Lista de los laseres que se van generando
+    private LinkedList<Laser> enemyLaserList; //Lista de los laseres enemigos que se van generando
+    private LinkedList<Explosion> listaExplosion; //Lista de las explosiones que van apareciendo
+    private int puntuacion = 0; //Variable de la puntuacion
 
     //Aqui vamos a declarar el HUD del juego
-    BitmapFont font;
-    float hudMargenVertical, hudMargenIzq, hudMargenDer, hudCentro, hudFila1Y, hudFila2Y, hudAnchoSeccion;
+    BitmapFont font; //La fuente que vamos a usar para el texto del HUD
+    float hudMargenVertical, hudMargenIzq, hudMargenDer, hudCentro, hudFila1Y, hudFila2Y, hudAnchoSeccion; //Establecemos los margenes y los elementos a mostrar en el HUD
 
 
     //Vamos a crear el constructor del GameScreen
     GameScreen() {
 
         camera = new OrthographicCamera(); //Esta es la típica cámara 2D sin perspectiva 3D de ningún tipo
-        viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, camera); //Establecemos el viewport sobre el que desarrollaremos nuestro juego
 
         //Establecemos el atlas de texturas
         textureAtlas = new TextureAtlas("imagenes.atlas");
 
         //Establecemos los fondos que vayamos a usar, en este caso solo 1
         backgrounds = new TextureRegion[1];
-        backgrounds[0] = textureAtlas.findRegion("world_background");
+        backgrounds[0] = textureAtlas.findRegion("world_background"); //Cogemos la posicion 0 que es la correspondiente al fondo del juego
 
-        backgroundScrollSpeed = WORLD_WIDTH;
+        backgroundScrollSpeed = WORLD_WIDTH; //Establecemos la velocidad a la que va a moverse el fondo
 
         //Establecemos los sonidos que usaremos
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/explosion.ogg"));
@@ -161,17 +161,17 @@ class GameScreen implements Screen {
         if (state == "ready"){
 
             //Establecemos musica de fondo
-            backgroundMusic.setVolume(0.8f);
-            backgroundMusic.setLooping(true);
-            backgroundMusic.play();
+            backgroundMusic.setVolume(0.8f); //Establecemos volumen
+            backgroundMusic.setLooping(true); //Establecemos el looping en true para que se reproduzca en bucle
+            backgroundMusic.play(); //Iniciamos la cancion de fondo
 
-            title = new Texture("FLOPDAPLANE.png");
-            batch.draw(title, WORLD_WIDTH / 6, WORLD_HEIGHT / 2, title.getWidth() / 4, title.getHeight() / 4);
+            title = new Texture("FLOPDAPLANE.png"); //Establecemos el titulo
+            batch.draw(title, WORLD_WIDTH / 6, WORLD_HEIGHT / 2, title.getWidth() / 4, title.getHeight() / 4); //Lo pintamos
 
-            tap = new Texture("PressStart.png");
-            batch.draw(tap, WORLD_WIDTH / 4, WORLD_HEIGHT / 3, title.getWidth() / 5, title.getHeight() / 5);
+            tap = new Texture("PressStart.png"); //Establecemos el press start
+            batch.draw(tap, WORLD_WIDTH / 4, WORLD_HEIGHT / 3, title.getWidth() / 5, title.getHeight() / 5); //Lo pintamos
 
-            renderReady();
+            renderReady(); //Llamamos al metodo encargado de detectar cuando tocamos la pantalla para jugar
 
         }else if (state == "running"){
 
@@ -179,7 +179,7 @@ class GameScreen implements Screen {
             detectarInput(deltaTime);
             playerShip.update(deltaTime);
 
-            spawnearAvionesEnemigos(deltaTime);
+            spawnearAvionesEnemigos(deltaTime); //Este metodo se encarga de generar los aviones enemigos
 
             //Vamos a declarar un iterador para recorrer la lista de objetos Naves enemigas
             ListIterator<NaveEnemiga> iteradorNaveEnemiga = enemyShipLista.listIterator();
@@ -208,41 +208,41 @@ class GameScreen implements Screen {
             renderHUD();
 
         }else if (state == "gameover"){
-            backgroundMusic.stop();
-            long id = gameoverSound.play(0.3f);
-            gameoverSound.setPitch(id,3);
-            gameoverSound.setLooping(id, false);
-            gameoverSound.dispose();
-            gameoverSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/gameover.m4a"));
-            end = new Texture("gameover.png");
-            batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, end.getWidth() / 4, end.getHeight() / 4);
+            backgroundMusic.stop(); //Cuando morimos paramos la musica
+            long id = gameoverSound.play(0.3f); //Establecemos el sonido de game over, le damos el volumen y lo reproducimos
+            gameoverSound.setPitch(id,3); //Establecemos la pista en la que se va a reproducir
+            gameoverSound.setLooping(id, false); //En esta ocasion no se reproduce en bucle
+            gameoverSound.dispose(); //Eliminamos el sonido
+            gameoverSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/gameover.m4a")); //Volvemos a cargar el sonido para la proxima vez que vayamos a usarlo
+            end = new Texture("gameover.png"); //Cargamos la imagen de game over
+            batch.draw(end, WORLD_WIDTH / 5, WORLD_HEIGHT / 2, end.getWidth() / 4, end.getHeight() / 4); //Pintamos la imagen
 
-            renderGameOver();
+            renderGameOver(); //Metodo encargado de comprobar cuando tocamos la pantalla game over y mandarnos de vuelta al estado ready
         }
 
         batch.end();
     }
 
     private void renderGameOver(){
-        if (Gdx.input.justTouched()){
-            end.dispose();
-            state = "ready";
-            playerShip.vidas = 3;
-            playerShip.escudo = 10;
-            puntuacion = 0;
+        if (Gdx.input.justTouched()){ //Si tocamos la pantalla
+            end.dispose(); //Eliminamos la imagen de game over
+            state = "ready"; //Establecemos el estado a ready para volver a la pantalla de inicio
+            playerShip.vidas = 3; //Reseteamos las vidas del jugador...
+            playerShip.escudo = 10; //Los escudos del mismo...
+            puntuacion = 0; //Y la puntuacion de este
 
-            enemyShipLista.clear();
-            enemyLaserList.clear();
-            playerLaserList.clear();
-            listaExplosion.clear();
+            enemyShipLista.clear(); //Limpiamos la lista de enemigos
+            enemyLaserList.clear(); //Limpiamos la lista de laseres enemigos
+            playerLaserList.clear(); //Limpiamos la lista de laseres del jugador
+            listaExplosion.clear(); //Limpiamos la lista de las explosiones
         }
     }
 
     private void renderReady(){
-        if (Gdx.input.justTouched()){
-            title.dispose();
-            tap.dispose();
-            state = "running";
+        if (Gdx.input.justTouched()){ //En cuanto toquemos la pantalla de inicio
+            title.dispose(); //Eliminamos el titulo
+            tap.dispose(); //Eliminamos el press start
+            state = "running"; //Cambiamos el estado para ejecutar el juego
         }
     }
 
@@ -408,19 +408,19 @@ class GameScreen implements Screen {
     }
 
     private void renderExplosions(float deltaTime){
-        ListIterator<Explosion> iteradorExplosiones = listaExplosion.listIterator();
-        while (iteradorExplosiones.hasNext()){
-            Explosion explosion = iteradorExplosiones.next();
-            explosion.update(deltaTime);
-            if (explosion.consultarFinal()){
-                iteradorExplosiones.remove();
-            }else {
-                explosion.pintar(batch);
-                long id = explosionSound.play(0.3f);
-                explosionSound.setPitch(id,2);
-                explosionSound.setLooping(id, false);
-                explosionSound.dispose();
-                explosionSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/explosion.ogg"));
+        ListIterator<Explosion> iteradorExplosiones = listaExplosion.listIterator(); //Iniciamos el iterador de explosiones
+        while (iteradorExplosiones.hasNext()){ //Establecemos un bucle de explosiones
+            Explosion explosion = iteradorExplosiones.next(); //Iniciamos una explosion
+            explosion.update(deltaTime); //La actualizamos
+            if (explosion.consultarFinal()){ //Cuando acabe
+                iteradorExplosiones.remove(); //La eliminamos
+            }else { //Si no, la pintamos
+                explosion.pintar(batch); //Pintamos textura
+                long id = explosionSound.play(0.3f); //Reproducimos sonido de explosion
+                explosionSound.setPitch(id,2); // Establecemos la pista en la que se reproducira
+                explosionSound.setLooping(id, false); //No queremos reproducirla en bucle
+                explosionSound.dispose(); //Eliminamos el sonido
+                explosionSound = Gdx.audio.newSound(Gdx.files.internal("sonidos/explosion.ogg")); //Lo volvemos a cargar para tenerlo de nuevo disponible
             }
         }
     }
@@ -428,7 +428,7 @@ class GameScreen implements Screen {
     private void renderLasers(float deltaTime){
         //Laser del jugador
         if (playerShip.consultaDisparo()){
-            Laser[] lasers = playerShip.dispararLasers();
+            Laser[] lasers = playerShip.dispararLasers(); //Iniciamos la accion de disparar laseres y lo añadimos a la lista
             for (Laser laser: lasers){
                 playerLaserList.add(laser);
             }
@@ -485,7 +485,7 @@ class GameScreen implements Screen {
     public void resize(int width, int height) {
         //Este método se encarga de cambiar la resolución de pantalla si esta cambia
         viewport.update(width, height, true); //Le decimos que actualice el tamaño y centre la cámara
-        batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined); //Llamamos a setProjectionMatrix para tener en cuenta los objetos del mundo y el propio fondo
     }
 
     @Override
